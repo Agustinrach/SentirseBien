@@ -64,8 +64,14 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    @Bean
+    // Cambiar el método a un método normal sin @Bean
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
+    }
+
+    // Registra este método en el contexto de configuración
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
     }
 }
