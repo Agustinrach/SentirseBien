@@ -31,37 +31,41 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/lib/**").permitAll()
-                        .requestMatchers("/.idea/**").permitAll()
-                        .requestMatchers("/mail/**").permitAll()
-                        .requestMatchers("/scss/**").permitAll() //
-                        .requestMatchers("/", "/index", "/login","/cliente/**","/servicios","/noticias","/empleo","/contacto").permitAll()  // Permitir acceso a login y a las páginas públicas
-                        .requestMatchers("/empleado/**","/utilidades","/reservas","/consulta/editar/**").hasAuthority("EMPLEADO")  // Solo empleados
-                        .requestMatchers("/hacerreserva").hasAuthority("CLIENTE") // Solo clientes
-                        .anyRequest().authenticated()  // Cualquier otra solicitud requiere autenticación
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")  // Página de inicio de sesión personalizada
-                        .defaultSuccessUrl("/", true)  // Redirige a la página de inicio tras un login exitoso
-                        .permitAll()  // Permitir el acceso a la página de login
-                )
-                .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/403"))  // Página de acceso denegado
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                ); // Redirigir a la página de inicio tras el logout
+            .authorizeHttpRequests(auth -> auth
+                // Recursos estáticos accesibles sin autenticación
+                .requestMatchers("/img/**", "/css/**", "/js/**", "/lib/**", "/mail/**", "/scss/**").permitAll()
+                
+                // Rutas accesibles sin autenticación
+                .requestMatchers("/", "/index", "/login", "/cliente/**", "/servicios", "/noticias", "/empleo", "/contacto").permitAll()
+                
+                // Rutas solo para empleados
+                .requestMatchers("/empleado/**", "/utilidades", "/reservas", "/consulta/editar/**").hasAuthority("EMPLEADO")
+                
+                // Rutas solo para clientes
+                .requestMatchers("/hacerreserva").hasAuthority("CLIENTE")
+                
+                // Cualquier otra solicitud requiere autenticación
+                .anyRequest().authenticated()
+            )
+            .formLogin(form -> form
+                .loginPage("/login")  // Página personalizada de login
+                .defaultSuccessUrl("/", true)  // Redirección tras el login exitoso
+                .permitAll()
+            )
+            .exceptionHandling(ex -> ex
+                .accessDeniedPage("/403")  // Página de error de acceso denegado
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")  // Redirección tras el logout
+                .permitAll()
+            );
+
         return http.build();
     }
-
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
