@@ -3,6 +3,7 @@ package com.example.SentirseBien;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +22,41 @@ public class SecurityConfig {
     }
 
     @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/lib/**").permitAll()
+                        .requestMatchers("/.idea/**").permitAll()
+                        .requestMatchers("/mail/**").permitAll()
+                        .requestMatchers("/scss/**").permitAll()
+                        .requestMatchers("/", "/index", "/login", "/cliente/**", "/servicios", "/noticias", "/empleo", "/contacto").permitAll()
+                        .requestMatchers("/empleado/**", "/utilidades", "/reservas", "/consulta/editar/**").hasAuthority("EMPLEADO")
+                        .requestMatchers("/hacerreserva").hasAuthority("CLIENTE")
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
+                        .permitAll()
+                )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/403"))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .permitAll()
+                );
+
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
@@ -29,39 +65,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/img/**", "/css/**", "/js/**").permitAll()
-                        .requestMatchers("/lib/**").permitAll()
-                        .requestMatchers("/.idea/**").permitAll()
-                        .requestMatchers("/mail/**").permitAll()
-                        .requestMatchers("/scss/**").permitAll() //
-                        .requestMatchers("/", "/index", "/login","/cliente/**","/servicios","/noticias","/empleo","/contacto").permitAll()  // Permitir acceso a login y a las páginas públicas
-                        .requestMatchers("/empleado/**","/utilidades","/reservas","/consulta/editar/**").hasAuthority("EMPLEADO")  // Solo empleados
-                        .requestMatchers("/hacerreserva").hasAuthority("CLIENTE") // Solo clientes
-                        .anyRequest().authenticated()  // Cualquier otra solicitud requiere autenticación
-                )
-                .formLogin(form -> form
-                        .loginPage("/login")  // Página de inicio de sesión personalizada
-                        .defaultSuccessUrl("/", true)  // Redirige a la página de inicio tras un login exitoso
-                        .permitAll()  // Permitir el acceso a la página de login
-                )
-                .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/403"))  // Página de acceso denegado
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessUrl("/")
-                        .permitAll()
-                ); // Redirigir a la página de inicio tras el logout
-        return http.build();
+    public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(authenticationProvider());
     }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-
 }
