@@ -1,5 +1,6 @@
 package com.example.SentirseBien;
 
+import org.springframework.beans.factory.annotation.Autowired;  // Asegúrate de tener esta línea
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -64,12 +65,10 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // Cambiar el método a un método normal sin @Bean
     public void globalUserDetails(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
     }
 
-    // Registra este método en el contexto de configuración
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
