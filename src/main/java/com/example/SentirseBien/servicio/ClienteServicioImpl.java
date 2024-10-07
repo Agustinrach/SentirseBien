@@ -12,6 +12,7 @@ import java.util.List;
 @Service
 public class ClienteServicioImpl implements ClienteServicio{
     @Autowired
+    @Lazy
     private PasswordEncoder passwordEncoder;
 
     @Autowired
