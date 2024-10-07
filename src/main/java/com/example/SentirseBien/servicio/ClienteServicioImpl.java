@@ -1,5 +1,6 @@
 package com.example.SentirseBien.servicio;
 
+import org.springframework.context.annotation.Lazy;  // Importa @Lazy
 import com.example.SentirseBien.Entidad.Cliente;
 import com.example.SentirseBien.repositorio.ClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
