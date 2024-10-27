@@ -12,5 +12,6 @@ public interface ClienteServicio {
     public Cliente obtenerEmpleadoPorId(Long Id);
     public Cliente actualizarCliente(Cliente c);
     public void eliminarCliente(Long Id);
+    public Cliente buscarPorEmail(String email);
 }
 

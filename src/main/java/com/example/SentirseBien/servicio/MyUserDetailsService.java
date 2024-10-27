@@ -27,17 +27,22 @@ public class MyUserDetailsService implements UserDetailsService {
         System.out.println("Cargando usuario: " + email);
 
         Empleado empleado = empleadoRepositorio.findByEmail(email);
-        if(empleado!= null){
+        if (empleado != null) {
+            // Asigna el rol de "ADMIN" si el nombre del empleado es "admin"
+            String rol = switch (empleado.getNombre().toLowerCase()) {
+                case "admin" -> "ADMIN";
+                case "secretaria" -> "SECRETARIA";
+                default -> "EMPLEADO"; // Por defecto
+            };
             return new org.springframework.security.core.userdetails.User(
                     empleado.getEmail(),
                     empleado.getPassword(),
-                    Collections.singleton(new SimpleGrantedAuthority("EMPLEADO"))
+                    Collections.singleton(new SimpleGrantedAuthority(rol))
             );
         }
 
-
         Cliente cliente = clienteRepositorio.findByEmail(email);
-        if(cliente!=null){
+        if (cliente != null) {
             return new org.springframework.security.core.userdetails.User(
                     cliente.getEmail(),
                     cliente.getPassword(),
@@ -47,4 +52,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
         throw new UsernameNotFoundException("Usuario no encontrado");
     }
+
+
 }

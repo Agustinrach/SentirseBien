@@ -48,4 +48,11 @@ public class ClienteServicioImpl implements ClienteServicio{
 
     }
 
+    @Override
+    public Cliente buscarPorEmail(String email) {
+            return clienteRepositorio.findByEmail(email);
+
+    }
+
+
 }

@@ -36,19 +36,21 @@ public class SecurityConfig {
                         .requestMatchers("/lib/**").permitAll()
                         .requestMatchers("/.idea/**").permitAll()
                         .requestMatchers("/mail/**").permitAll()
-                        .requestMatchers("/scss/**").permitAll() //
-                        .requestMatchers("/", "/index", "/login","/cliente/**","/servicios","/noticias","/empleo","/contacto").permitAll()  // Permitir acceso a login y a las páginas públicas
-                        .requestMatchers("/empleado/**","/utilidades","/reservas","/consulta/editar/**").hasAuthority("EMPLEADO")  // Solo empleados
-                        .requestMatchers("/hacerreserva").hasAuthority("CLIENTE") // Solo clientes
-                        .anyRequest().authenticated()  // Cualquier otra solicitud requiere autenticación
+                        .requestMatchers("/scss/**").permitAll()
+                        .requestMatchers("/", "/index", "/login", "/cliente/**", "/servicios", "/noticias", "/empleo", "/contacto","/servicio").permitAll() // Páginas públicas
+                        .requestMatchers("/empleado/**", "/consulta/editar/**").hasAnyAuthority("EMPLEADO" , "ADMIN") // Solo empleados
+                        .requestMatchers("/reservas").hasAnyAuthority("ADMIN","SECRETARIA") // Solo admin
+                        .requestMatchers("/utilidades").hasAuthority("ADMIN") // Solo admin
+
+                        .requestMatchers("/hacerreserva","/crear_reservas","/consulta","/reserva").hasAnyAuthority("CLIENTE","ADMIN") // Solo clientes
                 )
                 .formLogin(form -> form
-                        .loginPage("/login")  // Página de inicio de sesión personalizada
-                        .defaultSuccessUrl("/", true)  // Redirige a la página de inicio tras un login exitoso
-                        .permitAll()  // Permitir el acceso a la página de login
+                        .loginPage("/login") // Página de inicio de sesión personalizada
+                        .defaultSuccessUrl("/", true) // Redirige a la página de inicio tras un login exitoso
+                        .permitAll() // Permitir el acceso a la página de login
                 )
                 .exceptionHandling(ex -> ex
-                        .accessDeniedPage("/403"))  // Página de acceso denegado
+                        .accessDeniedPage("/403")) // Página de acceso denegado
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
@@ -56,6 +58,7 @@ public class SecurityConfig {
                 ); // Redirigir a la página de inicio tras el logout
         return http.build();
     }
+
 
 
     @Bean

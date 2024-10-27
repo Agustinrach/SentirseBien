@@ -3,24 +3,42 @@ package com.example.SentirseBien.Entidad;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "reservas")
 public class Reserva {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "fecha")
-    private LocalDateTime fecha;
+    // Relación ManyToOne con Cliente
+    @ManyToOne
+    @JoinColumn(name = "id_cliente", nullable = false)
+    private Cliente cliente;
 
-    @Column(name = "servicio")
-    private String servicio;
+    // Relación ManyToMany con Servicio
+    @ManyToMany
+    @JoinTable(
+            name = "reserva_servicio", // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "reserva_id"), // Columna que referencia a la reserva
+            inverseJoinColumns = @JoinColumn(name = "servicio_id") // Columna que referencia al servicio
+    )
+    private List<Servicio> servicios;
 
-    @Column(name = "nombre_cliente")
-    private String nombreCliente;
+    @Column(nullable = false)
+    private LocalDateTime fechaHora;  // Fecha y hora de la reserva
 
+    @Column(nullable = false)
+    private double total;  // Total de la reserva
+
+    @Column(name = "metodo_pago", nullable = false)
+    private String metodoPago;  // Método de pago (ej. "DEBITO", "CREDITO")
+
+    // Constructor vacío
+    public Reserva() {}
+
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -29,38 +47,43 @@ public class Reserva {
         this.id = id;
     }
 
-
-    public LocalDateTime getFecha() {
-        return fecha;
+    public Cliente getCliente() {
+        return cliente;
     }
 
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
-    public String getServicio() {
-        return servicio;
+    public List<Servicio> getServicios() {
+        return servicios;
     }
 
-    public void setServicio(String servicio) {
-        this.servicio = servicio;
+    public void setServicios(List<Servicio> servicios) {
+        this.servicios = servicios;
     }
 
-    public String getNombreCliente() {
-        return nombreCliente;
+    public LocalDateTime getFechaHora() {
+        return fechaHora;
     }
 
-    public void setNombreCliente(String nombreCliente) {
-        this.nombreCliente = nombreCliente;
+    public void setFechaHora(LocalDateTime fechaHora) {
+        this.fechaHora = fechaHora;
     }
 
-    @Override
-    public String toString() {
-        return "Reserva{" +
-                "id=" + id +
-                ", fecha=" + fecha +
-                ", servicio='" + servicio + '\'' +
-                ", nombreCliente='" + nombreCliente + '\'' +
-                '}';
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
+    public String getMetodoPago() {
+        return metodoPago;
+    }
+
+    public void setMetodoPago(String metodoPago) {
+        this.metodoPago = metodoPago;
     }
 }

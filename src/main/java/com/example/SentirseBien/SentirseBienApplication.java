@@ -1,6 +1,7 @@
 package com.example.SentirseBien;
 
 import com.example.SentirseBien.Entidad.Empleado;
+import com.example.SentirseBien.servicio.EmpleadoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -18,10 +19,13 @@ public class SentirseBienApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SentirseBienApplication.class, args);
+
 	}
 
 	@Autowired
 	private EmpleadoRepositorio empleadoRepositorio;
+
+
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -30,6 +34,7 @@ public class SentirseBienApplication implements CommandLineRunner {
 
 		Empleado empleado2 = new Empleado("Agustin2","Rach2","agustinrach00@gmail.com2","431100812","36240317602");
 		empleadoRepositorio.save(empleado2);*/
+
 
 	}
 
@@ -46,6 +51,7 @@ public class SentirseBienApplication implements CommandLineRunner {
 			};
 		}
 	}
+
 
 
 
